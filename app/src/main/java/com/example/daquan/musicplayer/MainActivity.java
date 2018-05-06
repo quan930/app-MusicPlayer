@@ -2,6 +2,7 @@ package com.example.daquan.musicplayer;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Environment;
@@ -20,116 +21,102 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private Button start;//开始停止键
+    private Button down;//下一首
+    private Button up;//上一首
     private SeekBar seekBar;//进度条
+    private int sum;//歌曲总数
+    private int current = 0;//当前数
+    private Handler handler = new Handler();
     private MediaPlayer mediaPlayer;
-    private Handler handler;
+    private MusicPlayer musicPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        getSupportActionBar().hide();//去掉标题栏
         setContentView(R.layout.activity_main);
         start = (Button)findViewById(R.id.satrt);
+        down = (Button)findViewById(R.id.down);
+        up = (Button)findViewById(R.id.up);
         seekBar = (SeekBar) findViewById(R.id.Bar);
-        mediaPlayer = new MediaPlayer();
-        handler = new Handler()
-        {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what){
-                    case 1:
-                        seekBar.setProgress(msg.getData().getInt("123"));
-                        break;
-                }
-            }
-        };
-//        final Handler handler = new Handler()
-//        {
-//            @Override
-//            public void handleMessage(Message msg) {
-//
-//            }
-//        };
         try {
-            File file = new File("/sdcard/Music/沼野跃鱼丶 - 赵鑫 - 许多年以后.mp3");
-            mediaPlayer.setDataSource(file.getPath());
-            mediaPlayer.prepare();
-//            mediaPlayer.setLooping(true);//循环播放
-            seekBar.setProgress(mediaPlayer.getCurrentPosition());
-            seekBar.setMax(mediaPlayer.getDuration());
-
-
+            musicPlayer = new MusicPlayer("/sdcard/Music");
+            sum = musicPlayer.getSum();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mediaPlayer = musicPlayer.getMediaPlayer();
+        seekBar.setProgress(mediaPlayer.getCurrentPosition());
+        seekBar.setMax(mediaPlayer.getDuration());
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(start.getText().equals("开始")){
                     start.setText("暂停");
                     mediaPlayer.start();
-//                    handler.post(updatesb);
-                    new Thread(updatesb).start();
-//                    thread.start();
                 }else{
                     mediaPlayer.pause();
                     start.setText("开始");
                 }
             }
         });
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        //下一首
+        down.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                mediaPlayer.seekTo(seekBar.getProgress());
+            public void onClick(View view) {
+                mediaPlayer.reset();
+                mediaPlayer = musicPlayer.next();
+                seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                seekBar.setMax(mediaPlayer.getDuration());
+                if(start.getText().equals("暂停")){
+                    mediaPlayer.start();
+                }
             }
-
+        });
+        up.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+            public void onClick(View view) {
+                mediaPlayer.reset();
+                mediaPlayer = musicPlayer.before();
+                seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                seekBar.setMax(mediaPlayer.getDuration());
+                if(start.getText().equals("暂停")){
+                    mediaPlayer.start();
+                }
             }
         });
     }
-
-//    Runnable musicStart=new Runnable(){
-//
-//        @Override
-//        public void run() {
-//            // TODO Auto-generated method stub
-//            mediaPlayer.start();
-//            handler.post(updatesb);
-//            //用一个handler更新SeekBar
-//        }
-//    };
-    Runnable updatesb =new Runnable(){
-
+    @Override
+    protected void onResume() {
+        seekBar.setProgress(mediaPlayer.getCurrentPosition());
+        seekBar.setMax(mediaPlayer.getDuration());
+        handler.post(runnable);
+        super.onResume();
+    }
+    public Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            // TODO Auto-generated method stub
-//            Message message = new Message();
-            while(true){
-                try {
-                    Message message=handler.obtainMessage();
-                    message.what = 1;
-                    Bundle bundle = new Bundle();
-//                    seekBar.setProgress(mediaPlayer.getCurrentPosition());
-//                    int currentPosition = mediaPlayer.getCurrentPosition();
-                    bundle.putInt("123",mediaPlayer.getCurrentPosition());
-                    message.setData(bundle);
-                    handler.sendMessage(message);
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            seekBar.setProgress(mediaPlayer.getCurrentPosition());
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (fromUser) {
+                        mediaPlayer.seekTo(seekBar.getProgress());
+                    }
                 }
-            }
-//            seekBar.setProgress(mediaPlayer.getCurrentPosition());
-//            handler.postDelayed(updatesb, 1000);
-            //每秒钟更新一次
-        }
 
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+//                    musicService.mediaPlayer.seekTo(seekBar.getProgress());
+                }
+            });
+            handler.postDelayed(runnable, 1000);
+        }
     };
+
 }
+

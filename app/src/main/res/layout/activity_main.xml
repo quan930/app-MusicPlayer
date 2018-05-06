@@ -8,19 +8,63 @@
 
     <Button
         android:id="@+id/satrt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="59dp"
         android:text="开始" />
+
+    <Button
+        android:id="@+id/up"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/satrt"
+        android:layout_toStartOf="@+id/satrt"
+        android:layout_marginBottom="5dp"
+        android:text="上一首" />
+
+    <Button
+        android:id="@+id/down"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/satrt"
+        android:layout_toRightOf="@+id/satrt"
+        android:layout_marginBottom="5dp"
+        android:text="下一首" />
 
     <SeekBar
         android:id="@+id/Bar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/alltime"
+        android:layout_alignTop="@+id/alltime"
+        android:layout_toEndOf="@+id/currentTime"
+        android:layout_toLeftOf="@+id/alltime"
+        android:layout_toRightOf="@+id/currentTime"
+        android:layout_toStartOf="@+id/alltime" />
+
+    <TextView
+        android:layout_width="36dp"
+        android:layout_height="20dp"
         android:layout_above="@+id/satrt"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="38dp"
+        android:text="14:10"
+        android:id="@+id/alltime" />
+
+    <TextView
+        android:id="@+id/currentTime"
+        android:layout_width="36dp"
+        android:layout_height="20dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="22dp" />
+        android:layout_alignTop="@+id/Bar"
+        android:text="0:00" />
 </RelativeLayout>
