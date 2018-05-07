@@ -134,10 +134,17 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("current",String.valueOf(position));
                 mediaPlayer.reset();
                 musicPlayer.setCurrent(position);
+                seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                seekBar.setMax(mediaPlayer.getDuration());
+                totalTime.setText(time.format(mediaPlayer.getDuration()));//曲目时间
+                musicName.setText(musicPlayer.getMusicName());//曲目名称
+                if(start.getText().equals("暂停")){
+                    mediaPlayer.start();
+                }
                 popupWindow.dismiss();
-
             }
         });
     }
