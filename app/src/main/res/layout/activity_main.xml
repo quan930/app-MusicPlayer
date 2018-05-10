@@ -4,82 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.daquan.musicplayer.MainActivity">
+    tools:context="com.example.daquan.musicplayer.MainActivity"
+    android:background="#555555">
 
-    <Button
-        android:id="@+id/satrt"
-        android:layout_width="100dp"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="开始" />
-
-    <Button
-        android:id="@+id/up"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_toLeftOf="@+id/satrt"
-        android:layout_toStartOf="@+id/satrt"
-        android:layout_marginBottom="5dp"
-        android:text="上一首" />
-
-    <Button
-        android:id="@+id/down"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/satrt"
-        android:layout_toRightOf="@+id/satrt"
-        android:layout_marginBottom="5dp"
-        android:text="下一首" />
 
     <SeekBar
+        android:progressDrawable="@drawable/barbark"
+        android:thumb="@drawable/bar"
+        android:maxHeight="2dp"
         android:id="@+id/Bar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/alltime"
-        android:layout_alignTop="@+id/alltime"
-        android:layout_toEndOf="@+id/currentTime"
+        android:layout_height="20dp"
+        android:layout_above="@+id/musicList"
+        android:layout_marginBottom="40dp"
         android:layout_toLeftOf="@+id/alltime"
+        android:layout_toStartOf="@+id/alltime"
+        android:layout_toEndOf="@+id/currentTime"
         android:layout_toRightOf="@+id/currentTime"
-        android:layout_toStartOf="@+id/alltime" />
+        android:max="100"
+        android:progress="45"/>
+
 
     <TextView
+        android:id="@+id/alltime"
+        android:gravity="center"
         android:layout_width="36dp"
         android:layout_height="20dp"
-        android:layout_above="@+id/satrt"
+        android:layout_alignBottom="@+id/Bar"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="38dp"
-        android:id="@+id/alltime" />
+        android:text="12:12"
+        android:textColor="#aaffffff"/>
 
     <TextView
+        android:gravity="center"
+        android:textColor="#aaffffff"
         android:id="@+id/currentTime"
         android:layout_width="36dp"
         android:layout_height="20dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/Bar" />
+        android:layout_alignTop="@+id/Bar"
+        android:text="00:00"/>
 
     <TextView
-        android:layout_width="100dp"
+        android:id="@+id/musicName"
+        android:gravity="center"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="63dp"
+        android:text="sadfasdfbdfg"
+        android:textColor="#ffffff"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/musicName"/>
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@mipmap/img" />
 
-    <Button
+    <ImageButton
         android:id="@+id/musicList"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
+        android:scaleType="fitXY"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/musicstart"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="lis"/>
+        android:layout_marginBottom="17dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="#0000"
+        android:src="@drawable/menu"
+        />
 
+    <ImageButton
+        android:id="@+id/single"
+        android:scaleType="fitXY"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/musicbefore"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/Bar"
+        android:layout_marginLeft="23dp"
+        android:layout_marginStart="23dp"
+        android:background="#0000"
+        android:src="@drawable/circulation" />
+
+    <ImageButton
+        android:id="@+id/musicstart"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="13dp"
+        android:background="#0000"
+        android:scaleType="fitXY"
+        android:src="@drawable/start" />
+
+    <ImageButton
+        android:id="@+id/musicbefore"
+        android:scaleType="fitXY"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/Bar"
+        android:layout_toLeftOf="@+id/musicName"
+        android:layout_toStartOf="@+id/musicName"
+        android:background="#0000"
+        android:src="@drawable/before" />
+
+    <ImageButton
+        android:id="@+id/musicup"
+        android:scaleType="fitXY"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/Bar"
+        android:layout_toEndOf="@+id/musicName"
+        android:layout_toRightOf="@+id/musicName"
+        android:background="#0000"
+        android:src="@drawable/up" />
 </RelativeLayout>
