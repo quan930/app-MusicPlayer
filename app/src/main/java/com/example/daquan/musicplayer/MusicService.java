@@ -41,11 +41,13 @@ public class MusicService extends Service {
     public MusicService(String string) {
         list(new File(string));
         mun=musicList.size();//返回总数
+        Log.d("音乐数",String.valueOf(mun));
     }
     //构造器
     public MusicService() {
         list(new File(Environment.getExternalStorageDirectory()+"/Music"));
         mun=musicList.size();//返回总数
+        Log.d("音乐数",String.valueOf(mun));
     }
     //返回歌单
     public List<String> getMusicNameList() {
@@ -56,15 +58,17 @@ public class MusicService extends Service {
         return mun;
     }
     //换曲
-    public void setCurrent(int current) {
-        if(current>=musicList.size()){
+    public void setCurrent(int currentt) {
+        if(currentt>=musicList.size()){
             current = 0;
         }else{
-            if(current<0){
-                current = musicList.size()-1;
+            if(currentt<=0){
+                Log.d("asdf歌曲数",String.valueOf(currentt));
+                current = musicList.size()-2;
             }
         }
-        this.current = current;
+        this.current = currentt;
+        Log.d("asdf歌曲数",String.valueOf(current));
         try {
             mediaPlayer.setDataSource((musicList.get(current)).getPath());
             mediaPlayer.prepare();
@@ -102,16 +106,26 @@ public class MusicService extends Service {
             for(int i = 0;i < result.length;i++) {
                 if(result[i].isDirectory()){
                     list(result[i]);
+                    continue;
                 }else{
 //                    文件
-                    musicList.add(result[i]);
-                    nameList.add(result[i].getName().substring(0,result[i].getName().indexOf(".")));
+                    if(result[i].getName().endsWith("mp3")){
+                        musicList.add(result[i]);
+                        nameList.add(result[i].getName().substring(0,result[i].getName().indexOf(".")));
+                        continue;
+                    }else{
+                        continue;
+                    }
                 }
             }
         }else{
-            //文件
-            musicList.add(file);
-            nameList.add(file.getName().substring(0,file.getName().indexOf(".")));
+            if(file.getName().endsWith("mp3")){
+                musicList.add(file);
+                nameList.add(file.getName().substring(0,file.getName().indexOf(".")));
+                return;
+            }else{
+                return;
+            }
         }
     }
     @Override
@@ -136,8 +150,8 @@ public class MusicService extends Service {
         }
     }
     @SuppressLint("WrongConstant")
-    public  void AnimatorAction() {
-        if (mediaPlayer.isPlaying()) {
+    public  void AnimatorAction(boolean isplay) {
+        if (isplay) {
             animator.setDuration(5000);
             animator.setInterpolator(new LinearInterpolator()); // 均速旋转
             animator.setRepeatCount(ValueAnimator.INFINITE); // 无限循环

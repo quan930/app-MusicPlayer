@@ -66,35 +66,33 @@
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:src="@mipmap/img" />
+        android:src="@mipmap/img"/>
 
     <ImageButton
         android:id="@+id/musicList"
-        android:scaleType="fitXY"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_alignBottom="@+id/musicstart"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="17dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginRight="27dp"
         android:background="#0000"
-        android:src="@drawable/menu"
-        />
+        android:scaleType="fitXY"
+        android:src="@drawable/menu" />
 
     <ImageButton
         android:id="@+id/single"
-        android:scaleType="fitXY"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_alignBottom="@+id/musicbefore"
+        android:layout_alignBottom="@+id/musicList"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/Bar"
-        android:layout_marginLeft="23dp"
-        android:layout_marginStart="23dp"
+        android:layout_marginLeft="21dp"
+        android:layout_marginStart="21dp"
         android:background="#0000"
+        android:scaleType="fitXY"
         android:src="@drawable/circulation" />
 
     <ImageButton
@@ -110,23 +108,27 @@
 
     <ImageButton
         android:id="@+id/musicbefore"
-        android:scaleType="fitXY"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/Bar"
-        android:layout_toLeftOf="@+id/musicName"
-        android:layout_toStartOf="@+id/musicName"
+        android:layout_alignTop="@+id/single"
+        android:layout_marginEnd="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_toLeftOf="@+id/musicstart"
+        android:layout_toStartOf="@+id/musicstart"
         android:background="#0000"
+        android:scaleType="fitXY"
         android:src="@drawable/before" />
 
     <ImageButton
         android:id="@+id/musicup"
-        android:scaleType="fitXY"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/Bar"
-        android:layout_toEndOf="@+id/musicName"
-        android:layout_toRightOf="@+id/musicName"
+        android:layout_alignBottom="@+id/musicList"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/musicstart"
+        android:layout_toRightOf="@+id/musicstart"
         android:background="#0000"
+        android:scaleType="fitXY"
         android:src="@drawable/up" />
 </RelativeLayout>

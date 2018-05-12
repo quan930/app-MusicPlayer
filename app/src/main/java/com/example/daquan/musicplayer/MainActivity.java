@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private PopupWindow popupWindow;//菜单浮窗
     private ListView listView;
     private MusicService musicService;
-    private Boolean isPlay = false;//音乐开始键 停止为faluse
+    static private Boolean isPlay = false;//音乐开始键 停止为faluse
     private PopupMenu popupMenu;
     private static int musicState = 1;//歌曲状态，1为顺序，2为乱序，3为单曲
 
@@ -68,13 +68,9 @@ public class MainActivity extends AppCompatActivity {
             //透明状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-
-        coverImage = (ImageView) findViewById(R.id.imageView);
-        musicService.animator = ObjectAnimator.ofFloat(coverImage, "rotation", 0, 359);
-
         start = findViewById(R.id.musicstart);
-        down = findViewById(R.id.musicbefore);
-        up =findViewById(R.id.musicup);
+        up = findViewById(R.id.musicbefore);
+        down =findViewById(R.id.musicup);
         musicMenu = findViewById(R.id.musicList);
         totalTime = findViewById(R.id.alltime);
         single = findViewById(R.id.single);
@@ -83,56 +79,51 @@ public class MainActivity extends AppCompatActivity {
         seekBar = findViewById(R.id.Bar);
         popupMenu = new PopupMenu(MainActivity.this,single);
         popupMenu.getMenuInflater().inflate(R.menu.main, popupMenu.getMenu());
+        coverImage = findViewById(R.id.imageView);
+        musicService.animator = ObjectAnimator.ofFloat(coverImage, "rotation", 0, 359);
 
-        if(musicService.getMediaPlayer()==null){
-            musicService.initializePlayer();
-        }else {
-            if(musicService.getMediaPlayer().isPlaying()){
-//                start.setText("暂停");
-                start.setImageResource(R.drawable.stop);
-                musicService.AnimatorAction();
-                isPlay = false;
-                Log.d("音乐播放", "onCreate: ");
-            }else{
-                Log.d("没有播放", "onCreate: ");
-            }
-        }
-        if (musicState==1){//顺序播放
-            musicService.getMediaPlayer().setLooping(false);
-            single.setImageResource(R.drawable.circulation);
-        }else{
-            if (musicState == 2){//乱序播放
-                musicService.getMediaPlayer().setLooping(false);
-                single.setImageResource(R.drawable.music_shuffle_button);
-            }else {//单曲循环
-                musicService.getMediaPlayer().setLooping(true);//循环播放
-                single.setImageResource(R.drawable.lopping);
-            }
-        }
+        prepare();//准备工作
         musicMenu();//菜单浮窗
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(isPlay){
-                    start.setImageResource(R.drawable.stop);
-                    isPlay = false;
-                    musicService.getMediaPlayer().start();
-                    musicService.AnimatorAction();
-                }else{
-                    musicService.getMediaPlayer().pause();
                     start.setImageResource(R.drawable.start);
-                    musicService.AnimatorAction();
+                    Log.d("已经停止", "onClick: ");
+                    isPlay = false;
+                    musicService.getMediaPlayer().pause();
+                    musicService.AnimatorAction(isPlay);
+                }else{
+                    musicService.getMediaPlayer().start();
+                    start.setImageResource(R.drawable.stop);
                     isPlay = true;
+                    musicService.AnimatorAction(isPlay);
+                    Log.d("已经开始", "onClick: ");
                 }
             }
         });
         //下一首
         down.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SimpleDateFormat")
             @Override
             public void onClick(View v) {
                 musicService.getMediaPlayer().reset();
-                musicService.setCurrent(musicService.getCurrent()+1);
+                if(musicState==1||musicState==3){
+                    if (musicService.getCurrent()>=musicService.getMun()-1){
+                        Log.d("最大", "onClick: ");
+                        musicService.setCurrent(0);
+                    }else {
+                        musicService.setCurrent(musicService.getCurrent()+1);
+                    }
+                }else{
+                    int m = musicService.getCurrent()+new Random().nextInt(3)+2;
+                    if (m>=musicService.getMun()-1){
+                        musicService.setCurrent(0);
+                    }else {
+                        musicService.setCurrent(m);
+                    }
+                }
                 seekBar.setProgress(musicService.getMediaPlayer().getCurrentPosition());
                 seekBar.setMax(musicService.getMediaPlayer().getDuration());
                 totalTime.setText(new SimpleDateFormat("mm:ss").format(musicService.getMediaPlayer().getDuration()));//曲目时间
@@ -144,10 +135,24 @@ public class MainActivity extends AppCompatActivity {
         });
         //上一首
         up.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SimpleDateFormat")
             @Override
             public void onClick(View v) {
                 musicService.getMediaPlayer().reset();
-                musicService.setCurrent(musicService.getCurrent()-1);
+                if(musicState==1||musicState==3){
+                    if (musicService.getCurrent()<=0){
+                        musicService.setCurrent(musicService.getMun()-1);
+                    }else {
+                        musicService.setCurrent(musicService.getCurrent()-1);
+                    }
+                }else{
+                    int m = musicService.getCurrent()-new Random().nextInt(3)-2;
+                    if (m<=0){
+                        musicService.setCurrent(musicService.getMun()-1);
+                    }else {
+                        musicService.setCurrent(m);
+                    }
+                }
                 seekBar.setProgress(musicService.getMediaPlayer().getCurrentPosition());
                 seekBar.setMax(musicService.getMediaPlayer().getDuration());
                 totalTime.setText(new SimpleDateFormat("mm:ss").format(musicService.getMediaPlayer().getDuration()));//曲目时间
@@ -210,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 seekBar.setMax(musicService.getMediaPlayer().getDuration());
                 totalTime.setText(new SimpleDateFormat("mm:ss").format(musicService.getMediaPlayer().getDuration()));//曲目时间
                 musicName.setText(musicService.getMusicName());
-                if(!isPlay){
+                if(isPlay){
                     musicService.getMediaPlayer().start();
                 }
                 popupWindow.dismiss();
@@ -254,11 +259,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             musicService.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                //播放完毕回调函数
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     musicService.getMediaPlayer().reset();
-                    if(musicState==1){
-                        musicService.setCurrent(musicService.getCurrent()+1);
+                    if(musicState==1||musicState==3){
+                        if (musicService.getCurrent()>=musicService.getMun()-1){
+                            musicService.setCurrent(0);
+                        }else {
+                            musicService.setCurrent(musicService.getCurrent()+1);
+                        }
                     }else{
                         musicService.setCurrent(new Random().nextInt(musicService.getMun()));
                     }
@@ -312,6 +322,33 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("断开连接", "onDestroy: ");
         unbindService(sc);
+    }
+    //准备
+    private void prepare(){
+        if(musicService.getMediaPlayer()==null){
+            musicService.initializePlayer();
+        }else {
+            if(musicService.getMediaPlayer().isPlaying()){
+                start.setImageResource(R.drawable.stop);//音乐正在播放更改button外观
+                musicService.AnimatorAction(isPlay);
+                isPlay = true;
+                Log.d("音乐播放", "onCreate: ");
+            }else{
+                Log.d("没有播放", "onCreate: ");
+            }
+        }
+        if (musicState==1){//顺序播放
+            musicService.getMediaPlayer().setLooping(false);
+            single.setImageResource(R.drawable.circulation);//更改button外观
+        }else{
+            if (musicState == 2){//乱序播放
+                musicService.getMediaPlayer().setLooping(false);
+                single.setImageResource(R.drawable.music_shuffle_button);//更改button外观
+            }else {//单曲循环
+                musicService.getMediaPlayer().setLooping(true);//循环播放
+                single.setImageResource(R.drawable.lopping);//更改button外观
+            }
+        }
     }
 }
 
